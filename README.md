@@ -11,4 +11,5 @@ This repository is for the NRC 2022 (and possibly WRO 2022)
 
 ### What we use
 ![Python Badge](https://img.shields.io/badge/python-1d3247?style=for-the-badge&logo=Python&logoColor=white)
+
 We use the Pybrick library to program Lego robots (because haojun refuses to let us use more dangerous stuff)
