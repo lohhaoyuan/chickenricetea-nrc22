@@ -1,4 +1,4 @@
-# HCI BOZOTICS CLUB: Team Nuts
+# HCI BOZOTICS CLUB: Team Touch Sensor
 ## Roboticians with too much caffeine at hand
 ### Who we are
 * Fan Wendi 
@@ -13,3 +13,6 @@ This repository is for the NRC 2022 (and possibly WRO 2022)
 ![Python Badge](https://img.shields.io/badge/python-1d3247?style=for-the-badge&logo=Python&logoColor=white)
 
 We use the Pybrick library to program Lego robots (because haojun refuses to let us use more dangerous stuff)
+
+### What else we do
+We worship the touch sensor
