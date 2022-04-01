@@ -17,7 +17,3 @@ We use the Pybrick library to program Lego robots (because haojun refuses to let
 ### What else we do
 We worship the touch sensor
 Bullsh*t :3
-
-never gonna give you up never gonna let you down yuzhes ass is fat, desert him
-
-we will make him cry, my dented laptop wont die, avenge the poopoo ass.
