@@ -16,5 +16,5 @@ We use the Pybrick library to program Lego robots (because haojun refuses to let
 
 ### What else we do
 We worship the touch sensor
-Bullsh*t :3
+what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was what was will be what will be was 
 
