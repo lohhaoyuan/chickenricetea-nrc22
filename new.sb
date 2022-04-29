@@ -1,0 +1,12 @@
+Sensor.SetMode(3,4)
+rawValue = Sensor.ReadRaw(3,3)
+
+While rawValue [1] > 
+  
+  rawValue = Sensor.ReadRaw(3,3)
+  lightVal = rawValue[0] + rawValue[1] + rawValue[2]
+  TextWindow.WriteLine("red:"+rawValue[0])
+  TextWindow.WriteLine("green:"+rawValue[1])
+  TextWindow.WriteLine("blue:"+rawValue[2])
+  ' TextWindow.WriteLine(lightVal)
+EndWhile
