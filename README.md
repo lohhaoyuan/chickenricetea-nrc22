@@ -1,4 +1,4 @@
-# HCI BOZOTICS CLUB: Team Touch Sensor
+# HCI TOUCH SENSOR CLUB: Team Touch Sensor
 ## A bunch of nerds sitting around a touch sensor
 ### Who we are
 * Fan Wendi 
