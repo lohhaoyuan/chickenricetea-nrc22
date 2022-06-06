@@ -1,4 +1,4 @@
-# HCI TOUCH SENSOR CLUB: Team Touch Sensor
+# Team Touch Sensor
 ## A bunch of nerds sitting around a touch sensor
 ### Who we are
 * Fan Wendi 
@@ -11,7 +11,9 @@ This repository is for the NRC 2022 (and possibly WRO 2022)
 
 ### What we use
 
-We use funni ev3 stupid program to program Lego robots
+We use funni ev3 stupid program to program Lego robots.
+
+we also use very funni pybricks
 ### What else we do
 We worship the touch sensor
 stop posting copypasta here
