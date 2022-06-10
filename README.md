@@ -1,5 +1,4 @@
-# Team Touch Sensor
-## A bunch of nerds sitting around a touch sensor
+# Chicken Rice Tea
 ### Who we are
 * Fan Wendi 
 * Loh Hao Yuan
