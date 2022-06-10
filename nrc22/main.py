@@ -1,4 +1,5 @@
 #!/usr/bin/env pybricks-micropython
+
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
@@ -18,12 +19,33 @@ MotorA = Motor(Port.A)
 MotorB = Motor(Port.B)
 MotorC= Motor(Port.C)
 MotorD = Motor(Port.D)
-left_color = EV3ColorSensor()
-right_color = EV3ColorSensor()
-bottom_color = EV3ColorSensor()
-gyro_sensor = EV3GyroSensor()
+left_color = ColorSensor()
+right_color = ColorSensor()
+bottom_color = ColorSensor()
+gyro_sensor = GyroSensor()
+
+
 # Write your program here.
 
+# PID General Controller
+
+def PID(target, actual, kp, ki, kd):
+    integral = 0
+    error = target - actual
+    previous = error
+    derivative = 0
+    result = 0
+    while error != 0:
+        error = target - actual
+        integral += error
+        derivative = error - previous
+        result = (kp * error) + (ki * integral) + (kd * derivative)
+        MotorA.run(result)
+        MotorB.run(result)
+        previous = error
+        print(f"error is now {error}, changing speed to: {result}")
+    print("error is now 0")
+    
 # starting algorithm
 
 
