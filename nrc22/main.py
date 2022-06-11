@@ -28,22 +28,21 @@ gyro_sensor = GyroSensor()
 # Write your program here.
 
 # PID General Controller
-
 def PID(target, actual, kp, ki, kd):
     integral = 0
     error = target - actual
     previous = error
     derivative = 0
-    result = 0
+    output = 0
     while error != 0:
         error = target - actual
         integral += error
         derivative = error - previous
-        result = (kp * error) + (ki * integral) + (kd * derivative)
-        MotorA.run(result)
-        MotorB.run(result)
+        output = (kp * error) + (ki * integral) + (kd * derivative)
+        MotorA.run(output)
+        MotorB.run(output)
         previous = error
-        print(f"error is now {error}, changing speed to: {result}")
+        print(f"error is now {error}, output is now: {output}")
     print("error is now 0")
     
 # starting algorithm
