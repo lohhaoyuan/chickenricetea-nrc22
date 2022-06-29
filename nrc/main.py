@@ -18,8 +18,6 @@ left_color = ColorSensor()
 right_color = ColorSensor()
 bottom_color = ColorSensor()
 gyro_sensor = GyroSensor()
-
-
 # Write your program here.
 
 # PID General Controller
