@@ -7,13 +7,13 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-
+from math import *
 # Create your objects here.
 ev3 = EV3Brick()
-MotorA = Motor(Port.A)
-MotorB = Motor(Port.B)
-MotorC= Motor(Port.C)
-MotorD = Motor(Port.D)
+MotorLeft = Motor(Port.A)
+MotorRight = Motor(Port.B)
+MotorWater= Motor(Port.C)
+MotorBlocks = Motor(Port.D)
 left_color = ColorSensor()
 right_color = ColorSensor()
 bottom_color = ColorSensor()
@@ -21,26 +21,27 @@ gyro_sensor = GyroSensor()
 # Write your program here.
 
 # PID General Controller
-def PID(target, actual, kp, ki, kd):
+def PID_Gyro(threshold, target, actual):
+    kp = 200
+    ki = 1
+    kd = 1
     integral = 0
-    error = target - actual
-    previous = error
     derivative = 0
     output = 0
-    while error != 0:
+    while abs(error) > threshold:
         error = target - actual
         integral += error
         derivative = error - previous
         output = (kp * error) + (ki * integral) + (kd * derivative)
-        MotorA.run(output)
-        MotorB.run(output)
+        MotorLeft.run(output)
+        MotorRight.un(output * -1)
         previous = error
         print(f"error is now {error}, output is now: {output}")
-    print("error is now 0")
-    
-# starting algorithm
 
+# actual program
 
+# Testing
+PID_Gyro(2,0,gyro_sensor.angle())
 # the picking stuff up FUNCTION
 
 
