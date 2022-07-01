@@ -22,11 +22,11 @@ gyro_sensor = GyroSensor()
 
 # PID General Controller
 def PID_Gyro(threshold, target, actual):
-    kp = 200
+    kp = 1
     ki = 1
     kd = 1
     integral = 0
-    derivative = 0
+    derivative   = 0
     output = 0
     while abs(error) > threshold:
         error = target - actual
@@ -34,12 +34,12 @@ def PID_Gyro(threshold, target, actual):
         derivative = error - previous
         output = (kp * error) + (ki * integral) + (kd * derivative)
         MotorLeft.run(output)
-        MotorRight.un(output * -1)
+        MotorRight.run(output * -1)
         previous = error
         print(f"error is now {error}, output is now: {output}")
-
+def ITWONTKILLYOUYUZHE(threshold_that_didnt_kill_yuzhe, target_that_didnt_kill_yuzhe, actual_that_might_have_killed_yuzhe):
+    pass
 # actual program
-
 # Testing
 PID_Gyro(2,0,gyro_sensor.angle())
 # the picking stuff up FUNCTION
