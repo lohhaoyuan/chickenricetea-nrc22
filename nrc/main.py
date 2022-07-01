@@ -53,9 +53,10 @@ def PID_Gyro(threshold, target, actual):
 #         error = (target_rgb(1)-actual_rgb(1),target_rgb(2)-actual_rgb(2),target_rgb(0)-actual_rgb(0))
 #         integral += mean(error)
 #         derivative = (error(1)-previous(1),error(2)-previous(2),error(0)-previous(0))
-# actual prrogram
+# actual program
 # Testing
 PID_Gyro(2,0,gyro_sensor.angle())
+AMOGUS = "yes"
 # the picking stuff up FUNCTION
 
 
