@@ -8,7 +8,7 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
 from math import *
-from statistics import *
+from statistics import * 
 # Create your objects here.
 ev3 = EV3Brick()
 MotorLeft = Motor(Port.A)
@@ -27,7 +27,7 @@ def PID_Gyro(threshold, target, actual):
     ki = 1
     kd = 1
     integral = 0
-    derivative   = 0
+    derivative   = 0 
     output = 0
     error = target - actual
     previous = error
@@ -56,7 +56,7 @@ def PID_Gyro(threshold, target, actual):
 # actual program
 # Testing
 PID_Gyro(2,0,gyro_sensor.angle())
-AMOGUS = "yes"
+
 # the picking stuff up FUNCTION
 
 
