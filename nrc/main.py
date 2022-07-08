@@ -15,14 +15,36 @@ MotorLeft = Motor(Port.A)
 MotorRight = Motor(Port.B)
 MotorWater= Motor(Port.C)
 MotorBlocks = Motor(Port.D)
-left_color = ColorSensor()
-right_color = ColorSensor()
-bottom_color = ColorSensor()
-gyro_sensor = GyroSensor()
+left_color = ColorSensor(Port.S1)
+right_color = ColorSensor(Port.S2)
+bottom_color = ColorSensor(Port.S4)
+gyro_sensor = GyroSensor(Port.S3)
+robot = DriveBase(MotorLeft, MotorRight, wheel_diameter=55.5, axle_track=104)
+
 # Write your program here.
+ev3.speaker.beep()
+ev3.speaker.beep()
+
+ev3.speaker.beep()
+
+ev3.speaker.beep()
+
+ev3.speaker.beep()
+
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
+ev3.speaker.beep()
 
 # PID General Controller
 def PID_Gyro(threshold, target, actual):
+    robot.straight(500)
     kp = 1
     ki = 1
     kd = 1
@@ -38,7 +60,7 @@ def PID_Gyro(threshold, target, actual):
         output = (kp * error) + (ki * integral) + (kd * derivative)
         MotorLeft.run(output)
         MotorRight.run(output * -1) 
-        print(f"error is now {error}, output is now: {output}")
+    
         
 # def PID_Colour(threshold, left_rgb, right_rgb, actual_rgb): # look yuzhe you arent dead
 #     kp = 1
@@ -55,7 +77,9 @@ def PID_Gyro(threshold, target, actual):
 #         derivative = (error(1)-previous(1),error(2)-previous(2),error(0)-previous(0))
 # actual program
 # Testing
-PID_Gyro(2,0,gyro_sensor.angle())
+# PID_Gyro(2,0,gyro_sensor.angle())
+while True:
+    PID_Gyro(2,0,gyro_sensor.angle())
 
 # the picking stuff up FUNCTION
 
