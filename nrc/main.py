@@ -6,7 +6,6 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
-
 from math import *
 from statistics import * 
 # Create your objects here.
@@ -19,6 +18,7 @@ left_color = ColorSensor(Port.S1)
 right_color = ColorSensor(Port.S2)
 bottom_color = ColorSensor(Port.S4)
 gyro_sensor = GyroSensor(Port.S3)
+
 robot = DriveBase(MotorLeft, MotorRight, wheel_diameter=55.5, axle_track=104)
 
 # Write your program here.
@@ -78,9 +78,15 @@ def PID_Gyro(threshold, target, actual):
 # actual program
 # Testing
 # PID_Gyro(2,0,gyro_sensor.angle())
+#while True:
+ #   PID_Gyro(2,0,gyro_sensor.angle())
+#
 while True:
-    PID_Gyro(2,0,gyro_sensor.angle())
-
+    if gyro_sensor.angle() >= 360:
+        gyro_sensor.reset_angle(0)
+    if gyro_sensor.angle() > 0:
+        MotorLeft.run(1000)
+    
 # the picking stuff up FUNCTION
 
 
