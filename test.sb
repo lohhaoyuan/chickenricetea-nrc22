@@ -8,7 +8,7 @@ Sensor.SetMode(2,4)
 Sensor.SetMode(3,0)
 Sensor.SetMode(4,4)
 Motor.StartSync("AB",100,100)
-Program.Delay(2500)
+Program.Delay(2200)
 
 Sub GyroPID
   gyroVal = Sensor.ReadRawValue(3,0)
@@ -37,7 +37,7 @@ While gyroVal < 89 Or gyroVal > 91 ''wallbang
   Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
 EndWhile
 Motor.MoveSync("AB",-100,-100,500,"True")
-While threshold < 2 ''head to black line
+While threshold < 5 ''head to black line
   target = 60
   GyroPID()
   rawVals4 = Sensor.ReadRaw(4,3)
@@ -69,10 +69,12 @@ While threshold < 50
   EndIf
   Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
 EndWhile 
+While Motor.GetSpeed("A") < 12 And Motor.GetSpeed("B") < 12
+  target = 0
+  GyroPID()
+  Motor.StartSync("AB",Math.Min(13+correction,100),Math.Max(13-correction,-100))
+EndWhile
 threshold = 0
-Motor.Stop("AB","True")
-Program.Delay(1000)
-Program.End()
 Motor.ResetCount("AB")
 While "True" ''align for scan
   motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
@@ -83,7 +85,7 @@ While "True" ''align for scan
   If rawVals2[0] > 40 And rawVals2[1] < 20 Then
     Speaker.Note(100,"D4",200)
   EndIf
-  If rawVals2[0] > 40 And rawVals2[1] > 25 Then
+  If rawVals2[0] > 35 And rawVals2[1] > 25 Then
     Speaker.Note(100,"E4",200)
   EndIf
   Motor.StartSync("AB",Math.Max(15-motorDiff,-100),Math.Min(15+motorDiff,100))
