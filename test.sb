@@ -8,13 +8,78 @@ Sensor.SetMode(2,4)
 Sensor.SetMode(3,0)
 Sensor.SetMode(4,4)
 Motor.StartSync("AB",100,100)
+Motor.Start("C",-100)
 Program.Delay(2200)
 
 Sub GyroPID
   gyroVal = Sensor.ReadRawValue(3,0)
   correction = gyroVal - target
 EndSub
+Sub CalcPerc1
+  rawVals1 = Sensor.ReadRaw(1,3)
+  If rawVals1[0] + rawVals1[1] + rawVals1[2] <> 0 Then
+    RP1 = rawVals1[0] / (rawVals1[0] + rawVals1[1] + rawVals1[2]) * 100 
+    GP1 = rawVals1[1] / (rawVals1[0] + rawVals1[1] + rawVals1[2]) * 100
+    BP1 = rawVals1[2] / (rawVals1[0] + rawVals1[1] + rawVals1[2]) * 100
+  Else
+    RP2 = 0
+    BP2 = 0
+    GP2 = 0
+  EndIf
+EndSub
+Sub CalcPerc2
+  rawVals2 = Sensor.ReadRaw(2,3)
+  If rawVals2[0] + rawVals2[1] + rawVals2[2] <> 0 Then
+    RP2 = rawVals2[0] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100 
+    GP2 = rawVals2[1] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100
+    BP2 = rawVals2[2] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100
+  Else
+    RP2 = 0
+    BP2 = 0
+    GP2 = 0
+  EndIf
+EndSub
+Sub CalcPerc4
+  rawVals4 = Sensor.ReadRaw(4,3)
+  If rawVals4[0] + rawVals4[1] + rawVals4[2] <> 0 Then
+    RP4 = rawVals4[0] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100 
+    GP4 = rawVals4[1] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100
+    BP4 = rawVals4[2] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100
+  Else
+    RP4 = 0
+    GP4 = 0
+    BP4 = 0
+  EndIf
+EndSub
 
+Sub CheckColour1
+  CalcPerc1()
+  If rawVals1[0] + rawVals1[1] + rawVals1[2] > 15 Then
+    If RP1 > 14 And RP1 < 43 And BP1 > 21 And BP1 < 35 And GP1 > 31 And GP1 < 55 Then
+      Speaker.Note(50,"E4",250)
+    ElseIf RP1 > 64 And RP1 < 80 And BP1 < 12 And GP1 > 13 And GP1 < 29 Then
+      Speaker.Note(50,"D4",250)
+    Else
+      Speaker.Note(50,"C4",250)
+    EndIf
+  EndIf
+  'chem = 
+EndSub
+
+Sub CheckColour2
+  CalcPerc2()
+  If rawVals2[0] + rawVals2[1] + rawVals2[2] > 15 Then
+    If RP2 > 14 And RP2 < 43 And BP2 > 21 And BP2 < 35 And GP2 > 31 And GP2 < 55 Then
+      Speaker.Note(50,"E4",250)
+    ElseIf RP2 > 64 And RP2 < 80 And BP2 < 12 And GP2 > 13 And GP2 < 29 Then
+      Speaker.Note(50,"D4",250)
+    Else
+      Speaker.Note(50,"C4",250)
+    EndIf
+  EndIf
+  'chem = 
+EndSub
+threshold = 0
 While threshold < 12 ''detect horiz black line
   target = 0
   GyroPID()
@@ -56,37 +121,96 @@ Motor.StartSync("AB",-100,-100)
 Speaker.Note(100,"C4",500)
 Program.Delay(160)
 While threshold < 50
-  target = 0
+  target = 180 
   GyroPID()
-  If correction <> 0 Then
+  If correction = 0 Then
     threshold = threshold + 1
   EndIf
-  If correction < -3 Or correction > 3 And threshold > -1 Then
-    threshold = threshold - 1
+  If correction < -3 Or correction > 3 Then
+    If threshold > -1 Then
+      threshold = threshold - 1
+    EndIf
   EndIf
   If threshold > 49 Then
-    Program.Delay(10)
+    Program.Delay(20)
   EndIf
   Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
-EndWhile 
-While Motor.GetSpeed("A") < 12 And Motor.GetSpeed("B") < 12
-  target = 0
-  GyroPID()
-  Motor.StartSync("AB",Math.Min(13+correction,100),Math.Max(13-correction,-100))
 EndWhile
 threshold = 0
-Motor.ResetCount("AB")
-While "True" ''align for scan
-  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
-  rawVals2 = Sensor.ReadRaw(2,3)
-  If rawVals2[0] < 5 And rawVals2[1] > 5 Then
-    Speaker.Note(100,"C4",200)
+Motor.Stop("AB","True")
+Program.Delay(200)
+While threshold < 1
+  CalcPerc4()
+  If RP4 > 48 And RP4 < 50 Then
+    If BP4 > 20 And BP4 < 22 Then
+      threshold = threshold + 1
+    Else
+      If threshold > 0 Then
+        threshold = threshold - 0.5
+      EndIf
+    EndIf
+  Else
+    If threshold > 0 Then
+      threshold = threshold - 1
+    EndIf
   EndIf
-  If rawVals2[0] > 40 And rawVals2[1] < 20 Then
-    Speaker.Note(100,"D4",200)
-  EndIf
-  If rawVals2[0] > 35 And rawVals2[1] > 25 Then
-    Speaker.Note(100,"E4",200)
-  EndIf
-  Motor.StartSync("AB",Math.Max(15-motorDiff,-100),Math.Min(15+motorDiff,100))
+  target = 179
+  GyroPID()
+  Motor.StartSync("AB",Math.Min(-10+correction,100),Math.Max(-10-correction,-100))
 EndWhile
+Motor.ResetCount("AB")
+While Motor.GetCount("A") > -200
+  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+  Motor.StartSync("AB",Math.Max(-20-motorDiff,-100),Math.Min(-20+motorDiff,100))
+EndWhile
+Motor.Stop("AB","True")
+Program.Delay(150)
+CheckColour1()
+While Motor.GetCount("B") > -750
+  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+  Motor.StartSync("AB",Math.Max(-100-motorDiff,-100),Math.Min(-100+motorDiff,100))
+EndWhile
+Motor.Stop("AB","True")
+Program.Delay(150)
+CheckColour1()
+While Motor.GetCount("A") > -1500
+  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+  Motor.StartSync("AB",Math.Max(-100-motorDiff,-100),Math.Min(-100+motorDiff,100))
+EndWhile
+Motor.ResetCount("AB")
+While Motor.GetCount("B") < 150
+  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+  Motor.StartSync("AB",Math.Max(50-motorDiff,-100),Math.Min(50+motorDiff,100))
+EndWhile
+newBase = Sensor.ReadRawValue(3,0)
+While threshold < 50
+  target = 280
+  GyroPID()
+  If correction = 0 Then
+    threshold = threshold + 1
+  EndIf
+  If correction < -3 Or correction > 3 Then
+    If threshold > -1 Then
+      threshold = threshold - 1
+    EndIf
+  EndIf
+  If threshold > 49 Then
+    Program.Delay(20)
+  EndIf
+  Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
+EndWhile
+Motor.ResetCount("AB")
+While Motor.GetCount("A") < 200
+  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+  Motor.StartSync("AB",Math.Max(40-motorDiff,-100),Math.Min(40+motorDiff,100))
+EndWhile
+Motor.ResetCount("AB")
+Motor.Stop("AB","True")
+Program.Delay(150)
+CheckColour2()
+
+
+'fire 31/32 11/12 3/4
+'bg 0 1 0
+'chem 1 4/5 2
+'human 20/21 28/29 14/15
