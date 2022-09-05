@@ -1,0 +1,45 @@
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") + 500
+Sub MotorFwd
+  While Motor.GetCount("A") < endMotor
+    accelEnd = 50
+    baseSpeed = 10
+    maxSpeed = 90
+    motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+    If Motor.GetCount("A") > startMotor + accelEnd Then
+      If Motor.GetCount("A") < endMotor - accelEnd Then
+          Motor.StartSync("AB",Math.Max(maxSpeed-motorDiff,-100),Math.Min(maxSpeed-motorDiff,100))
+        Else
+          resultSpeed = Math.Power(Motor.GetCount("A")/(endMotor - accelEnd),2)*(baseSpeed - maxSpeed)+maxSpeed
+          Motor.StartSync("AB",Math.Max(resultSpeed-motorDiff,-100),Math.Min(resultSpeed+motorDiff,100))
+      EndIf
+    Else   
+      resultSpeed = Math.Power(Motor.GetCount("A")/(startMotor + accelEnd),2)*(maxSpeed-baseSpeed)+baseSpeed
+      Motor.StartSync("AB",Math.Max(resultSpeed-motorDiff,-100),Math.Min(resultSpeed+motorDiff,100))
+    EndIf
+  EndWhile
+EndSub
+
+Sub MotorBkd
+  While Motor.GetCount("A") > endMotor
+    accelEnd = -50
+    baseSpeed = -10
+    maxSpeed = -90
+    motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+    If Motor.GetCount("A") < startMotor + accelEnd Then
+      If Motor.GetCount("A") > endMotor - accelEnd Then
+          Motor.StartSync("AB",Math.Max(maxSpeed-motorDiff,-100),Math.Min(maxSpeed-motorDiff,100))
+        Else
+          resultSpeed = Math.Power(Motor.GetCount("A")/(endMotor - accelEnd),2)*(baseSpeed - maxSpeed)+maxSpeed
+          Motor.StartSync("AB",Math.Max(resultSpeed-motorDiff,-100),Math.Min(resultSpeed+motorDiff,100))
+      EndIf
+    Else   
+      resultSpeed = Math.Power(Motor.GetCount("A")/(startMotor + accelEnd),2)*(maxSpeed-baseSpeed)+baseSpeed
+      Motor.StartSync("AB",Math.Max(resultSpeed-motorDiff,-100),Math.Min(resultSpeed+motorDiff,100))
+    EndIf
+  EndWhile
+EndSub
+Motor.Stop("AB","False")
+While "True"
+  Motor.StartSync("AB",100,100)
+EndWhile

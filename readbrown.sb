@@ -1,0 +1,45 @@
+Sensor.SetMode(4,4)
+Sub CalcPerc2
+  rawVals2 = Sensor.ReadRaw(2,3)
+  If rawVals2[0] + rawVals2[1] + rawVals2[2] <> 0 Then
+    RP2 = rawVals2[0] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100 
+    BP2 = rawVals2[1] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100
+    GP2 = rawVals2[2] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100
+  Else
+    RP2 = 0
+    BP2 = 0
+    GP2 = 0
+  EndIf
+EndSub
+Sub CalcPerc4
+  rawVals4 = Sensor.ReadRaw(4,3)
+  If rawVals4[0] + rawVals4[1] + rawVals4[2] <> 0 Then
+    RP4 = rawVals4[0] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100 
+    BP4 = rawVals4[1] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100
+    GP4 = rawVals4[2] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100
+  Else
+    RP4 = 0
+    BP4 = 0
+    GP4 = 0
+  EndIf
+EndSub
+threshold = 0
+Motor.ResetCount("AB")
+While threshold < 5
+  CalcPerc4()
+  If RP4 > 48 And RP4 < 50 Then
+    If GP4 > 20.5 And GP4 < 22 Then
+      threshold = threshold + 1
+    Else
+      If threshold > 0 Then
+        threshold = threshold - 1
+      EndIf
+    EndIf
+  Else
+    If threshold > 0 Then
+      threshold = threshold - 1
+    EndIf
+  EndIf
+  motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+  Motor.StartSync("AB",Math.Max(15-motorDiff,-100),Math.Min(15+motorDiff,100))
+EndWhile

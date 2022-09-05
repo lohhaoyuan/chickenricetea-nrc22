@@ -1,0 +1,49 @@
+Sensor.SetMode(2,4)
+Sensor.SetMode(4,4)
+Sub CalcPerc2
+  rawVals2 = Sensor.ReadRaw(2,3)
+  If rawVals2[0] + rawVals2[1] + rawVals2[2] <> 0 Then
+    RP2 = rawVals2[0] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100 
+    GP2 = rawVals2[1] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100
+    BP2 = rawVals2[2] / (rawVals2[0] + rawVals2[1] + rawVals2[2]) * 100
+  Else
+    RP2 = 0
+    GP2 = 0
+    BP2 = 0
+  EndIf
+EndSub
+Sub CalcPerc4
+  rawVals4 = Sensor.ReadRaw(4,3)
+  If rawVals4[0] + rawVals4[1] + rawVals4[2] <> 0 Then
+    RP4 = rawVals4[0] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100 
+    GP4 = rawVals4[1] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100
+    BP4 = rawVals4[2] / (rawVals4[0] + rawVals4[1] + rawVals4[2]) * 100
+  Else
+    RP4 = 0
+    BP4 = 0
+    GP4 = 0
+  EndIf
+EndSub
+Sub CheckColour2
+  CalcPerc2()
+  If rawVals2[0] + rawVals2[1] + rawVals2[2] > 13 Then
+    If RP2 > 14 And RP2 < 43 And BP2 > 21 And BP2 < 35 And GP2 > 31 And GP2 < 55 And rawVals2[0] + rawVals2[1] + rawVals2[2] > 50 Then
+      Speaker.Note(50,"E4",250)
+    ElseIf RP2 > 64 And RP2 < 85 And BP2 < 12 And GP2 > 13 And GP2 < 29 Then
+      Speaker.Note(50,"D4",250)
+    Else
+      Speaker.Note(50,"C4",250)
+    EndIf
+  EndIf
+  'chem = 
+EndSub
+
+While "True"
+  LCD.StopUpdate()
+  LCD.Clear()
+  CheckColour2()
+  LCD.Text(1,89,24,2,RP2)
+  LCD.Text(1,89,54,2,GP2)
+  LCD.Text(1,89,84,2,BP2)
+  LCD.Update()
+EndWhile

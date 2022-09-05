@@ -1,0 +1,64 @@
+Sensor.SetMode(2,4)
+Sensor.SetMode(3,0)
+Motor.ResetCount("AB")
+i = 0
+target = 0
+gyroVal = 0
+
+Sub CheckColour
+  rawCols = Sensor.ReadRaw(2,3)
+  LCD.StopUpdate()
+  LCD.Clear()
+  LCD.Text(1,89,24,2,rawCols[0])
+  LCD.Text(1,89,54,2,rawCols[1])
+  LCD.Text(1,89,84,2,rawCols[2])
+  LCD.Update()
+  If rawCols[0] < 5 And rawCols[1] > 2 Then
+   Speaker.Note(100,"C4",200)
+  EndIf
+  If rawCols[0] > 20 And rawCols[2] < 6 Then
+   Speaker.Note(100,"D4",200)
+  EndIf
+  If rawCols[1] > 18 And rawCols[1] > 12 Then
+    Speaker.Note(100,"E4",200)
+  EndIf
+EndSub
+
+Sub GIDCorrect
+  While gyroVal <> 0
+     gyroVal = Sensor.ReadRawValue(3,0)
+     correction = gyroVal-target
+  EndWhile
+EndSub
+
+While Motor.GetCount("A") < 70
+  GIDCorrect()
+  Motor.StartSync("AB",Math.Min(50+correction,100),Math.Max(50-correction,-100)) 
+EndWhile
+Motor.Stop("AB","True")
+While i < 20
+  CheckColour()
+  i = i + 1
+  Program.Delay(50)
+EndWhile
+While Motor.GetCount("A") < 580
+  GIDCorrect()
+  Motor.StartSync("AB",Math.Min(50+correction,100),Math.Max(50-correction,-100))  
+EndWhile
+Motor.Stop("AB","True")
+i = 0
+While i < 20
+  CheckColour()
+  i = i + 1
+  Program.Delay(50)
+EndWhile
+While Motor.GetCount("A") < 100
+  GIDCorrect()
+  Motor.StartSync("AB",Math.Min(50+correction,100),Math.Max(50-correction,-100))
+EndWhile
+i = 0
+While i < 20
+  CheckColour()
+  i = i + 1
+  Program.Delay(50)
+EndWhile
