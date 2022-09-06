@@ -1,0 +1,57 @@
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") + 370
+target = 0
+prevError = 0
+threshold = 0
+
+Sub GyroPID
+  gyroVal = Sensor.ReadRawValue(3,0)
+  error = (gyroVal - target)
+  pCorrection = error * 1.6
+  dCorrection = (prevError - error) * 0.1
+  correction = pCorrection + dCorrection
+  prevError = error
+EndSub
+
+Sub MotorFwd
+  While Motor.GetCount("A") < endMotor
+    accelEnd = 80
+    baseSpeed = 10
+    maxSpeed = 100
+    motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
+    If Motor.GetCount("A") > startMotor + accelEnd Then
+      If Motor.GetCount("A") < endMotor - accelEnd Then
+          Motor.StartSync("AB",Math.Max(maxSpeed-motorDiff,-100),Math.Min(maxSpeed+motorDiff,100))
+      Else
+          resultSpeed = Math.Power(Motor.GetCount("A")/(endMotor - accelEnd),2)*(baseSpeed - maxSpeed)+maxSpeed
+          Motor.StartSync("AB",Math.Max(resultSpeed-motorDiff,-100),Math.Min(resultSpeed+motorDiff,100))
+      EndIf
+    Else   
+      resultSpeed = Math.Power(Motor.GetCount("A")/(startMotor + accelEnd),2)*(maxSpeed-baseSpeed)+baseSpeed
+      Motor.StartSync("AB",Math.Max(resultSpeed-motorDiff,-100),Math.Min(resultSpeed+motorDiff,100))
+    EndIf
+  EndWhile
+EndSub
+
+Motor.MoveSync("AB",30,30,370,"True")
+While threshold < 3
+  target = -90
+  GyroPID()
+  If correction > -2 And correction < 2 Then
+    threshold = threshold + 1
+  EndIf
+  If correction < -3 Or correction > 3 Then
+    If threshold > -1 Then
+      threshold = threshold - 1
+    EndIf
+  EndIf
+  If threshold > 49 Then
+    Program.Delay(20)
+  EndIf
+  Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
+EndWhile
+Motor.MoveSync("AB",-100,-100,250,"True")
+Motor.ResetCount("AB")
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") + 800
+MotorFwd()

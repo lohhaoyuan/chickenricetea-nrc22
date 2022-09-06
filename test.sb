@@ -2,7 +2,6 @@ lightVal4 = 0
 lightVal2 = 0
 target = 0
 threshold = 0
-target = 0
 prevError = 0
 startMotor = 0
 endMotor = 0
@@ -13,9 +12,9 @@ Sensor.SetMode(2,4)
 Sensor.SetMode(3,0)
 Sensor.SetMode(4,4)
 Motor.StartSync("AB",100,100)
-Motor.Move("C",-100,30,"False")
-Motor.Start("C",-20)
-Program.Delay(2200)
+Motor.Move("C",-60,30,"False")
+Motor.Start("C",-10)
+Program.Delay(2100)
 
 Sub GyroPID
   gyroVal = Sensor.ReadRawValue(3,0)
@@ -30,7 +29,7 @@ Sub MotorFwd
   While Motor.GetCount("A") < endMotor
     accelEnd = 80
     baseSpeed = 10
-    maxSpeed = 100
+    maxSpeed = 60
     motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
     If Motor.GetCount("A") > startMotor + accelEnd Then
       If Motor.GetCount("A") < endMotor - accelEnd Then
@@ -50,7 +49,7 @@ Sub MotorBkd
   While Motor.GetCount("A") > endMotor
     accelEnd = -80
     baseSpeed = -10
-    maxSpeed = -100
+    maxSpeed = -60
     motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
     If Motor.GetCount("A") < startMotor + accelEnd Then
       If Motor.GetCount("A") > endMotor - accelEnd Then
@@ -110,11 +109,15 @@ Sub CheckColour1
       Speaker.Note(50,"E4",250)
     ElseIf RP1 > 64 And RP1 < 85 And BP1 < 12 And GP1 > 13 And GP1 < 29 Then
       Speaker.Note(50,"D4",250)
+      MotorA = Motor.GetCount("A")
+      MotorB = Motor.GetCount("B")
       Motor.MoveSync("AB",40,40,160,"True")
-      Motor.Move("D",-70,-140,"True")
+      Motor.Move("D",60,120,"True")
       Program.Delay(250)
-      Motor.Move("D",70,140,"True")
-      Motor.MoveSync("AB",-40,-30,-160,"True")
+      Motor.Move("D",-40,-80,"True")
+      While Math.Abs(MotorA-Motor.GetCount("A")) > 5 Or Math.Abs(MotorB-Motor.GetCount("B")) > 5
+        Motor.StartSync("AB",0+(MotorA-Motor.GetCount("A")),0+(MotorB-Motor.GetCount("B")))
+      EndWhile
     Else
       Speaker.Note(50,"C4",250)
     EndIf
@@ -130,10 +133,10 @@ Sub CheckColour2
     ElseIf RP2 > 64 And RP2 < 85 And BP2 < 12 And GP2 > 13 And GP2 < 29 Then
       Speaker.Note(50,"D4",250)
       Motor.MoveSync("AB",40,40,160,"True")
-      Motor.Move("D",70,140,"True")
+      Motor.Move("D",60,120,"True")
       Program.Delay(250)
-      Motor.Move("D",-70,-140,"True")
-      Motor.MoveSync("AB",-40,-30,-160,"True")
+      Motor.Move("D",-40,-80,"True")
+      Motor.MoveSync("AB",-35,-40,-160,"True")
     Else
       Speaker.Note(50,"C4",250)
     EndIf
@@ -143,7 +146,7 @@ EndSub
 threshold = 0
 While threshold < 13 ''detect horiz black line
   target = 0
-  GyroPID()
+  GyroPID() 
   rawVals4 = Sensor.ReadRaw(4,3)
   lightVal4 = (rawVals4[0]+rawVals4[1]+rawVals4[2])/3
   If lightVal4 < 25 Then
@@ -162,7 +165,7 @@ While gyroVal < 89 Or gyroVal > 91 ''wallbang
   GyroPID()
   Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
 EndWhile
-Motor.MoveSync("AB",-100,-100,500,"True")
+Motor.MoveSync("AB",-100,-100,300,"True")
 While threshold < 5 ''head to black line
   target = 80
   GyroPID()
@@ -178,8 +181,8 @@ While threshold < 5 ''head to black line
 EndWhile
 threshold = 0
 Motor.Stop("AB","True")
-Motor.MoveSync("AB",-20,-20,-25,"True")
-Speaker.Note(100,"C4",500)
+Motor.MoveSync("AB",-35,-35,35,"True")
+Speaker.Note(100,"C4",250)
 While threshold < 50
   target = 180 
   GyroPID()
@@ -199,7 +202,7 @@ EndWhile
 threshold = 0
 Motor.Stop("AB","True")
 Program.Delay(200)
-While threshold < 3
+While threshold < 2
   CalcPerc4()
   If RP4 > 48 And RP4 < 50 Then
     If BP4 > 20 And BP4 < 22 Then
@@ -223,25 +226,25 @@ Motor.MoveSync("AB",-50,-50,-200,"True")
 Program.Delay(150)
 CheckColour1()
 startMotor = Motor.GetCount("A")
-endMotor = Motor.GetCount("A") - 550
+endMotor = Motor.GetCount("A") - 540
 MotorBkd()
 Motor.Stop("AB","True")
 Program.Delay(150)
 CheckColour1()
-Motor.MoveSync("AB",-84,-100,-500,"False")
+Motor.MoveSync("AB",-86,-100,-500,"False")
 Motor.ResetCount("AB")
 startMotor = Motor.GetCount("A")
 endMotor = Motor.GetCount("A") - 260
 MotorBkd()
 Motor.ResetCount("AB")
-While Motor.GetCount("B") < 165
+While Motor.GetCount("B") < 170
   motorDiff = Motor.GetCount("A") - Motor.GetCount("B")
   Motor.StartSync("AB",Math.Max(20-motorDiff,-100),Math.Min(20+motorDiff,100))
 EndWhile
 newBase = Sensor.ReadRawValue(3,0)
 threshold = 0
 While threshold < 3
-  target = newBase + 74
+  target = newBase + 80
   GyroPID()
   If correction > -2 And correction < 2 Then
     threshold = threshold + 1
@@ -256,8 +259,7 @@ While threshold < 3
   EndIf
   Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
 EndWhile
-Motor.MoveSync("AB",30,30,180,"True")
-Motor.StartSync("AB",-25,25)
+Motor.MoveSync("AB",30,30,150,"False")
 Motor.ResetCount("AB")
 Program.Delay(200)
 CheckColour2()
@@ -267,14 +269,16 @@ MotorBkd()
 Motor.Stop("AB","True")
 Program.Delay(200)                                                                              
 CheckColour2()
+Motor.MoveSync("AB",10,-10,10,"False")
+Motor.ResetCount("AB")
 startMotor = Motor.GetCount("A")
-endMotor = Motor.GetCount("A") - 560
+endMotor = Motor.GetCount("A") - 500
 MotorBkd()
 Motor.Stop("AB","True")
 Program.Delay(200)
 CheckColour2()
 startMotor = Motor.GetCount("A")
-endMotor = Motor.GetCount("A") - 710
+endMotor = Motor.GetCount("A") - 640
 MotorBkd()
 Motor.Stop("AB","True")
 Motor.ResetCount("AB")
@@ -304,7 +308,7 @@ Motor.MoveSync("AB",30,30,150,"True")
 Motor.ResetCount("AB")
 CheckColour2()
 startMotor = Motor.GetCount("A")
-endMotor = Motor.GetCount("A") - 580
+endMotor = Motor.GetCount("A") - 540
 MotorBkd()
 Motor.Stop("AB","True")
 Program.Delay(200)
@@ -316,10 +320,69 @@ Motor.Stop("AB","True")
 Program.Delay(200)
 CheckColour2()
 startMotor = Motor.GetCount("A")
-endMotor = Motor.GetCount("A") - 580
+endMotor = Motor.GetCount("A") - 540
 MotorBkd()
 Motor.Stop("AB","True")
 Program.Delay(200)
 CheckColour2()
+Motor.MoveSync("AB",30,30,370,"True")
+While threshold < 3
+  target = newBase - 180
+  GyroPID()
+  If correction > -2 And correction < 2 Then
+    threshold = threshold + 1
+  EndIf
+  If correction < -3 Or correction > 3 Then
+    If threshold > -1 Then
+      threshold = threshold - 1
+    EndIf
+  EndIf
+  If threshold > 49 Then
+    Program.Delay(20)
+  EndIf
+  Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
+EndWhile
+Motor.MoveSync("AB",-100,-100,250,"True")
+newBase = Sensor.ReadRawValue(3,0)
+Motor.ResetCount("AB")
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") + 800
+MotorFwd()
+Motor.Stop("AB","True")
+Program.Delay(200)
+CheckColour1()
+Motor.MoveSync("AB",-20,-20,-100,"True")
+While threshold < 3
+  target = newBase - 90
+  GyroPID()
+  If correction > -2 And correction < 2 Then
+    threshold = threshold + 1
+  EndIf
+  If correction < -3 Or correction > 3 Then
+    If threshold > -1 Then
+      threshold = threshold - 1
+    EndIf
+  EndIf
+  If threshold > 49 Then
+    Program.Delay(20)
+  EndIf
+  Motor.StartSync("AB",Math.Min(0+correction,100),Math.Max(0-correction,-100))
+EndWhile
+Motor.ResetCount("AB")
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") - 540
+MotorBkd()
+Motor.Stop("AB","True")
+Program.Delay(200)
+CheckColour2()
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") - 120
+MotorBkd()
+Motor.Stop("AB","True")
+Program.Delay(200)
+CheckColour2()
+startMotor = Motor.GetCount("A")
+endMotor = Motor.GetCount("A") + 1000
+MotorFwd()
 
 
